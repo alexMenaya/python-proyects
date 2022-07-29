@@ -12,13 +12,14 @@ import numpy as np
 from itertools import groupby
 from random import randint
 
+BOARD_SIZE = 3
 BLANK = "."
 PLAYER_X = "X"
 PLAYER_O = "O" 
 
 class TicTacToe:
     def __init__(self):
-        self.size = 3
+        self.size = BOARD_SIZE
         self.board = np.array([[BLANK]*self.size]*self.size)
         self.activePlayer = ""
     
