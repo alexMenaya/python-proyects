@@ -24,6 +24,7 @@ class TicTacToe:
         self.activePlayer = ""
     
     def resetBoard(self):
+        """ Set up an empty board"""
         self.board = np.array([[BLANK]*self.size]*self.size)
         
     def draw(self):
