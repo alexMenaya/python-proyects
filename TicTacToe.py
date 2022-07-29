@@ -3,6 +3,10 @@
 Created on Fri Jul 29 14:22:01 2022
 
 @author: AMenaya
+
+TicTacToe program. To run:
+from TicTacToe import TicTacToe
+TicTacToe.play()
 """
 import numpy as np
 from itertools import groupby
