@@ -17,9 +17,9 @@ PLAYER_X = "X"
 PLAYER_O = "O" 
 
 class TicTacToe:
-    def __init__(self, n = 3):
-        self.size = n
-        self.board = np.array([[BLANK]*n]*n)
+    def __init__(self):
+        self.size = 3
+        self.board = np.array([[BLANK]*self.size]*self.size)
         self.activePlayer = ""
     
     def resetBoard(self):
