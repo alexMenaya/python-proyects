@@ -128,9 +128,8 @@ class MNKGame:
         # Check principal diagonal
         number_of_pd = ((self.width-(row-col)>=self.toWin-1) and (self.width-(col-row)>=self.toWin-1))*min(row+1, col+1, self.height-row, self.width-col, self.width-(row-col)-self.toWin+1,self.width-(col-row)-self.toWin+1, self.toWin)
         print("principal diagonal " + str(number_of_pd))
-        for ind in range(number_of_pd):
-            #This is not working 
-            to_check = [[max(0, row-self.toWin) + ind + k, max(0, col-self.toWin) + ind + k] for k in range(self.toWin)]
+        for ind in range(number_of_pd): 
+            to_check = [[max(0, row-self.toWin +1) + ind + k, max(0, col-self.toWin+1) + ind + k] for k in range(self.toWin)]
             print(to_check)
             #kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
         # Check secondary diagonal
@@ -138,8 +137,8 @@ class MNKGame:
         number_of_sd = ((self.width-(row-(self.width-col-1))>=self.toWin-1) and (self.width-((self.width-col-1)-row)>=self.toWin-1))*min(row+1, (self.width-col-1)+1, self.height-row, self.width-(self.width-col-1), self.width-(row-(self.width-col-1))-self.toWin+1,self.width-((self.width-col-1)-row)-self.toWin+1, self.toWin)
         print(" antidiagonal " + str(number_of_sd))
         for ind in range(number_of_sd):
-            # This is not right
-            to_check = [[self.height + (max(0, row-self.toWin) - ind - k) - 1, self.width + (max(0, (self.width-col-1)-self.toWin) - ind - k) -1] for k in range(self.toWin)]
+            # This is not right for some stuff is not working, but work for the rest
+            to_check = [[max(0, row-self.toWin +1) + ind + k, min(self.width , col + self.toWin - 1) - ind - k] for k in range(self.toWin)]
             print(to_check)
             #kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
         return kInLine
