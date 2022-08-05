@@ -11,6 +11,7 @@ TicTacToe.play()
 import numpy as np
 from itertools import groupby
 from random import randint
+from time import sleep
 
 BOARD_SIZE = 3
 BLANK = " "
@@ -63,7 +64,7 @@ class Player:
         self.wins += 1
         return self
         
-class MNKGame:
+class NMKGame:
     def __init__(self, rows = 3, cols = 3, toWin = 3, token_1 = PLAYER_X, token_2 = PLAYER_O):
         """ m,n,k-game: m rows, n columns, k in line to win. TocTacToe = 3,3,3-game.
         Parameters:
@@ -112,35 +113,30 @@ class MNKGame:
         # Check horizontal: each row
         all_spots_hor = range(max(0,col-self.toWin + 1),min(col+self.toWin,self.width))
         num_spots_hor = len(all_spots_hor) - self.toWin + 1
-        print("horizontal " +str(num_spots_hor))
         for index_col in range(num_spots_hor):
-            to_check = [[row, max(0,col-self.toWin + 1)+index_col + k] for k in range(self.toWin)]
-            #print(to_check)
-            #kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+            to_check = [bo[row, max(0,col-self.toWin + 1)+index_col + k] for k in range(self.toWin)]
+            kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+        
         # Check veritcal
         all_spots_ver = range(max(0,row-self.toWin + 1),min(row+self.toWin,self.height))
         num_spots_ver = len(all_spots_ver) - self.toWin + 1
-        print("vertical "+str(num_spots_ver))
         for index_row in range(num_spots_ver):
-            to_check = [[max(0,row-self.toWin + 1)+index_row + k, col] for k in range(self.toWin)]
-            #print(to_check)
-            #kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+            to_check = [bo[max(0,row-self.toWin + 1)+index_row + k, col] for k in range(self.toWin)]
+            kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+        
         # Check principal diagonal
         number_of_pd = ((self.width-(row-col)>=self.toWin-1) and (self.width-(col-row)>=self.toWin-1))*min(row+1, col+1, self.height-row, self.width-col, self.width-(row-col)-self.toWin+1,self.width-(col-row)-self.toWin+1, self.toWin)
-        print("principal diagonal " + str(number_of_pd))
         for ind in range(number_of_pd): 
-            to_check = [[max(0, row-self.toWin +1) + ind + k, max(0, col-self.toWin+1) + ind + k] for k in range(self.toWin)]
-            print(to_check)
-            #kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+            to_check = [bo[row - min(row, col, self.toWin -1) + ind + k, col - min(row, col, self.toWin -1) + ind + k] for k in range(self.toWin)]
+            kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+        
         # Check secondary diagonal
         # Clean next line (because i changed j -> len -j and we can cancel stuff)
         number_of_sd = ((self.width-(row-(self.width-col-1))>=self.toWin-1) and (self.width-((self.width-col-1)-row)>=self.toWin-1))*min(row+1, (self.width-col-1)+1, self.height-row, self.width-(self.width-col-1), self.width-(row-(self.width-col-1))-self.toWin+1,self.width-((self.width-col-1)-row)-self.toWin+1, self.toWin)
-        print(" antidiagonal " + str(number_of_sd))
         for ind in range(number_of_sd):
-            # This is not right for some stuff is not working, but work for the rest
-            to_check = [[max(0, row-self.toWin +1) + ind + k, min(self.width , col + self.toWin - 1) - ind - k] for k in range(self.toWin)]
-            print(to_check)
-            #kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+            to_check = [bo[row - min(row, (self.width-col-1), self.toWin -1) + ind + k, col + min(row, (self.width-col-1), self.toWin -1) - ind - k] for k in range(self.toWin)]
+            kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
+        
         return kInLine
         
     def play(self):
@@ -167,3 +163,18 @@ class MNKGame:
         msgDraw = "Board is full, game ends in a draw"
         msg = msgWinner*self.isThereWinner + msgDraw*self.board.draw
         print(msg)
+        
+def main():
+    # Here comes the code
+    get_input_height = int(input("Number of rows: "))
+    get_input_width = int(input("Number of columns: "))
+    k_in_row = int(input("To win place k in a line. Choose k: "))
+    game = NMKGame(rows = get_input_height, cols = get_input_width, toWin = k_in_row)
+    game.play()
+    print("Game finished, the window will close")
+    sleep(3)
+    
+if __name__ == '__main__':
+    main()
+    
+    
