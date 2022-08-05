@@ -78,20 +78,19 @@ class MNKGame:
         self.height = rows
         self.width = cols
         self.board = Board(rows, cols)
-        self.player1 = Player(token_1)
-        self.player2 = Player(token_2)
+        self.players = [Player(token_1), Player(token_2)]
         self.activePlayer = self.selectRandomPlayer()
         self.toWin = toWin
         self.isThereWinner = False
-        self.draw = False
+        self.isDraw = False
     
     def selectRandomPlayer(self):
         r = randint(0,1)
-        return self.player1.token*r + self.player2.token*(1-r)
+        return self.players[0].token*r + self.players[1].token*(1-r)
     
     def swapPlayerTurn(self, player):
-        r = self.player1.token == player
-        self.activePlayer = self.player1.token*r + self.player2.token*(1-r)
+        r = self.players[0].token == player
+        self.activePlayer = self.players[0].token*(1-r) + self.players[1].token*r
         return self
     
     def isIterableFull(self, iterable):
@@ -131,7 +130,7 @@ class MNKGame:
             kInLine = kInLine or (self.isIterableFull(to_check) and self.allIterableEqual(to_check))
         
         # Check secondary diagonal
-        # Clean next line (because i changed j -> len -j and we can cancel stuff)
+        # Number of secondary diagonals is the number of first diagonals with col -> self.width -col -1
         number_of_sd = ((self.width-(row-(self.width-col-1))>=self.toWin-1) and (self.width-((self.width-col-1)-row)>=self.toWin-1))*min(row+1, (self.width-col-1)+1, self.height-row, self.width-(self.width-col-1), self.width-(row-(self.width-col-1))-self.toWin+1,self.width-((self.width-col-1)-row)-self.toWin+1, self.toWin)
         for ind in range(number_of_sd):
             to_check = [bo[row - min(row, (self.width-col-1), self.toWin -1) + ind + k, col + min(row, (self.width-col-1), self.toWin -1) - ind - k] for k in range(self.toWin)]
@@ -143,8 +142,8 @@ class MNKGame:
         # Reset board
         self.board.resetBoard()
         self.isThereWinner = False
-        self.draw = False
-        while not self.isThereWinner or self.draw:
+        self.isDraw = False
+        while not (self.isThereWinner or self.isDraw):
             print("It is turn for player: " + self.activePlayer)
             # Show the board
             self.board.draw()
@@ -155,14 +154,15 @@ class MNKGame:
                 inputSpot = int(input("Invalid spot. Choose an empty spot < " + spots + ": "))
             self.board.updateBoard(self.activePlayer, inputSpot)
             self.isThereWinner = self.kInLine(inputSpot)
-            self.draw = self.board.isBoardFull()
+            self.isDraw = self.board.isBoardFull()
             self.swapPlayerTurn(self.activePlayer)
         
         self.swapPlayerTurn(self.activePlayer)
         msgWinner = "Winner is player " + self.activePlayer
         msgDraw = "Board is full, game ends in a draw"
-        msg = msgWinner*self.isThereWinner + msgDraw*self.board.draw
+        msg = msgWinner*self.isThereWinner + msgDraw*self.isDraw
         print(msg)
+        self.board.draw()
         
 def main():
     # Here comes the code
