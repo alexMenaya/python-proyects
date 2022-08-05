@@ -64,7 +64,7 @@ class Player:
         self.wins += 1
         return self
         
-class NMKGame:
+class MNKGame:
     def __init__(self, rows = 3, cols = 3, toWin = 3, token_1 = PLAYER_X, token_2 = PLAYER_O):
         """ m,n,k-game: m rows, n columns, k in line to win. TocTacToe = 3,3,3-game.
         Parameters:
@@ -169,11 +169,12 @@ def main():
     get_input_height = int(input("Number of rows: "))
     get_input_width = int(input("Number of columns: "))
     k_in_row = int(input("To win place k in a line. Choose k: "))
-    game = NMKGame(rows = get_input_height, cols = get_input_width, toWin = k_in_row)
+    game = MNKGame(rows = get_input_height, cols = get_input_width, toWin = k_in_row)
     game.play()
     print("Game finished, the window will close")
     sleep(3)
-    
+
+# This I need to think it for the moment
 if __name__ == '__main__':
     main()
     
