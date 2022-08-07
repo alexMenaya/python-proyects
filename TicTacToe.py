@@ -10,7 +10,7 @@ TicTacToe.play()
 """
 import numpy as np
 from itertools import groupby
-from random import randint
+import random
 from time import sleep
 
 BOARD_SIZE = 3
@@ -56,13 +56,25 @@ class Board:
             print(" -" + self.width* "-------")
             
 class Player:
-    def __init__(self, token):
+    def __init__(self, token, index, ai = False):
         self.token = token
+        self.index = index
+        self.ai = ai
         self.wins = 0
         
     def updWins(self):
         self.wins += 1
         return self
+    
+    def move(self, board):
+        if self.ai:
+            move = 0;
+        else:
+            spots = str(board.width*board.height+1)
+            move = int(input("Choose a spot < " + spots + ": "))
+            while board.isSpotFull(move) or move > board.width*board.height+1 or move < 0:
+                 move = int(input("Invalid spot. Choose an empty spot < " + spots + ": "))
+        return move;
         
 class MNKGame:
     def __init__(self, rows = 3, cols = 3, toWin = 3, token_1 = PLAYER_X, token_2 = PLAYER_O):
@@ -75,22 +87,23 @@ class MNKGame:
         Returns
         -------
         MNKGame object. To play MNKGame().play()"""
+        # Board
         self.height = rows
         self.width = cols
         self.board = Board(rows, cols)
-        self.players = [Player(token_1), Player(token_2)]
-        self.activePlayer = self.selectRandomPlayer()
         self.toWin = toWin
+        # Players
+        self.players = [Player(token_1, 0), Player(token_2, 1)]
+        self.activePlayerIndex = random.randint(0,1)
+        self.activePlayer = self.players[self.activePlayerIndex]
+        # Endgame
         self.isThereWinner = False
         self.isDraw = False
     
-    def selectRandomPlayer(self):
-        r = randint(0,1)
-        return self.players[0].token*r + self.players[1].token*(1-r)
-    
-    def swapPlayerTurn(self, player):
-        r = self.players[0].token == player
+    def swapPlayerTurn(self, playerIndex):
+        r = self.activePlayerIndex == playerIndex
         self.activePlayer = self.players[0].token*(1-r) + self.players[1].token*r
+        self.activePlayerIndex = not(playerIndex)
         return self
     
     def isIterableFull(self, iterable):
@@ -144,18 +157,16 @@ class MNKGame:
         self.isThereWinner = False
         self.isDraw = False
         while not (self.isThereWinner or self.isDraw):
-            print("It is turn for player: " + self.activePlayer)
+            print("It is turn for player: " + self.activePlayer.token)
             # Show the board
             self.board.draw()
             # Ask user for a spot
-            spots = str(self.width*self.height+1)
-            inputSpot = int(input("Choose a spot < " + spots + ": "))
-            while self.board.isSpotFull(inputSpot) or inputSpot > self.width*self.height+1 or inputSpot < 0:
-                inputSpot = int(input("Invalid spot. Choose an empty spot < " + spots + ": "))
-            self.board.updateBoard(self.activePlayer, inputSpot)
+            inputSpot = self.activePlayer.move(self.board)
+            # Update board and check for winners            
+            self.board.updateBoard(self.activePlayer.token, inputSpot)
             self.isThereWinner = self.kInLine(inputSpot)
             self.isDraw = self.board.isBoardFull()
-            self.swapPlayerTurn(self.activePlayer)
+            self.swapPlayerTurn(self.activePlayer.index)
         
         self.swapPlayerTurn(self.activePlayer)
         msgWinner = "Winner is player " + self.activePlayer
@@ -171,8 +182,13 @@ def main():
     k_in_row = int(input("To win place k in a line. Choose k: "))
     game = MNKGame(rows = get_input_height, cols = get_input_width, toWin = k_in_row)
     game.play()
-    print("Game finished, the window will close")
-    sleep(3)
+    while True:
+        more = input("To quit insert q, to replay r: ")
+        if more == "q":
+            break
+        elif more == "r":
+            game.play()
+    
 
 # This I need to think it for the moment
 if __name__ == '__main__':
