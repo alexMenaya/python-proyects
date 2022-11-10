@@ -4,6 +4,8 @@ Created on Fri Jul 29 14:22:01 2022
 
 @author: AMenaya
 
+Some more tests
+
 TicTacToe program. To run:
 from TicTacToe import TicTacToe
 TicTacToe.play()
